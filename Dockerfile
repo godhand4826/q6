@@ -4,8 +4,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 ARG PROGRAM=executable
-ARG LD_FLAGS
-RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-s -w ${LD_FLAGS}" -o ${PROGRAM} .
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 make build
 
 FROM alpine:3.10.3 AS runner
 WORKDIR /app

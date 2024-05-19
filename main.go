@@ -2,34 +2,35 @@ package main
 
 import (
 	"net/http"
-	"os"
+	"q6/lib/logger"
+	"q6/lib/serve"
+	"q6/pkg/config"
+	"q6/pkg/router"
+	"q6/pkg/service"
 	"time"
 
-	"cmp"
-
-	_ "github.com/joho/godotenv/autoload"
 	"go.uber.org/zap"
 )
 
 func main() {
-	addr := cmp.Or(os.Getenv("ADDR"), ":8080")
+	cfg := config.NewConfig()
 
-	logger := NewLogger()
+	logger := logger.NewLogger()
 	defer func() {
 		_ = logger.Sync()
 	}()
 
-	matchingSystem := NewMatchingSystem(logger)
-	engine := NewServer(logger)
-	NewMatchingSystemRouter(matchingSystem).BindOn(engine)
+	matchingSystem := service.NewMatchingSystem(logger)
+	engine := serve.NewServer(logger)
+	router.NewMatchingSystemRouter(matchingSystem).BindOn(engine)
 
 	server := &http.Server{
 		ReadTimeout: time.Second,
-		Addr:        addr,
+		Addr:        cfg.Addr,
 		Handler:     engine.Handler(),
 	}
 
-	logger.Info("Starting server at", zap.String("addr", addr))
+	logger.Info("Starting server at", zap.String("addr", cfg.Addr))
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		logger.Fatal("Server unexpected stopped", zap.Error(err))
 	}

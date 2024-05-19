@@ -1,21 +1,22 @@
-package main
+package router
 
 import (
 	"net/http"
+	"q6/lib/serve"
+	"q6/pkg/entity"
+	"q6/pkg/service"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Router interface {
-	BindOn(r *gin.Engine)
-}
+var _ serve.Router = (*matchingSystemRouter)(nil)
 
 type matchingSystemRouter struct {
-	m MatchingSystem
+	m service.MatchingSystem
 }
 
-func NewMatchingSystemRouter(m MatchingSystem) Router {
+func NewMatchingSystemRouter(m service.MatchingSystem) serve.Router {
 	return &matchingSystemRouter{
 		m: m,
 	}
@@ -43,7 +44,7 @@ func (r *matchingSystemRouter) AddSinglePersonAndMatchHandler(c *gin.Context) {
 
 	}
 
-	id, err := r.m.AddSinglePersonAndMatch(req.Name, req.Height, Gender(req.Gender), req.Dates)
+	id, err := r.m.AddSinglePersonAndMatch(req.Name, req.Height, entity.Gender(req.Gender), req.Dates)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -72,7 +73,7 @@ func (r *matchingSystemRouter) QuerySingleMale(c *gin.Context) {
 		return
 	}
 
-	result, err := r.m.QuerySinglePeople(n, GenderMale)
+	result, err := r.m.QuerySinglePeople(n, entity.GenderMale)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -88,7 +89,7 @@ func (r *matchingSystemRouter) QuerySingleFemale(c *gin.Context) {
 		return
 	}
 
-	users, err := r.m.QuerySinglePeople(n, GenderFemale)
+	users, err := r.m.QuerySinglePeople(n, entity.GenderFemale)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

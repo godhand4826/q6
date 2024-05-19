@@ -1,14 +1,13 @@
 NAME=$(shell go list -m)
 TAG?=latest
-LD_FLAGS=
 
 .PHONY: build
 build:
-	go build -o $(NAME) .
+	go build -o $(NAME)
 
 .PHONY: clean
 clean:
-	go clean
+	go clean -x
 
 .PHONY: test
 test:
@@ -24,4 +23,4 @@ bin/golangci-lint:
 
 .PHONY: image
 image:
-	docker build --build-arg PROGRAM=$(NAME) --build-arg LD_FLAGS="$(LD_FLAGS)" -t $(NAME):$(TAG) .
+	docker build --build-arg PROGRAM=$(NAME) -t $(NAME):$(TAG) .
