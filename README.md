@@ -1,36 +1,44 @@
 # q6
 
-## Dependency
+## Preretirement
 - golang@1.22.3
 - docker
 - GNU Make
 
-## Build
+## Makefile
 ```bash
+# build
 make build
-```
 
-## Test
-```bash
+# test
 make test
-```
 
-## Clean
-```bash
+# clean
 make clean
-```
 
-## Lint
-> The script will automatically install `golangci-lint` to `./bin`
-```bash
+# automatically install swag to ./bin and run it
+make doc
+
+# automatically install golangci-lint to ./bin and run it
 make lint
+
+# build docker image
+make image # with default tag name 'latest'
+env TAG=1.0.0 make image # or provide a tag name
 ```
 
-## Docker Image
+## Project structure
 ```bash
-# use the default tag name 'latest'
-make image
-
-# or provide a tag name
-env TAG=1.0.0 make image
+.
+├── bin # develop tools (golangci-lint, swag)
+├── docs # swag generating docs
+├── lib # libraries for non-business logic
+└── pkg # business logic
 ```
+
+## System design
+| Method                  | Time complexity |
+| ----------------------- | --------------- |
+| AddSinglePersonAndMatch | O(log(n))       |
+| RemoveSinglePerson      | O(log(n))       |
+| QuerySinglePeople       | O(q * log(n))   |
