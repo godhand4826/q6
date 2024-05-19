@@ -69,4 +69,5 @@ env TAG=1.0.0 make image # or provide a tag name
 | AddSinglePersonAndMatch   | O(log(n))        |
 | RemoveSinglePerson        | O(log(n))        |
 | QuerySinglePeople         | O(N * log(n))    |
+
 (`n` 為該性別尚未配對的人數; `N` 為請求的數量)
