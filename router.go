@@ -72,7 +72,13 @@ func (r *matchingSystemRouter) QuerySingleMale(c *gin.Context) {
 		return
 	}
 
-	r.m.QuerySinglePeople(n, GENDER_MALE)
+	result, err := r.m.QuerySinglePeople(n, GenderMale)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 func (r *matchingSystemRouter) QuerySingleFemale(c *gin.Context) {
@@ -82,7 +88,7 @@ func (r *matchingSystemRouter) QuerySingleFemale(c *gin.Context) {
 		return
 	}
 
-	users, err := r.m.QuerySinglePeople(n, GENDER_FEMALE)
+	users, err := r.m.QuerySinglePeople(n, GenderFemale)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

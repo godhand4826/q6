@@ -18,7 +18,7 @@ type MatchRequest struct {
 type Gender string
 
 const (
-	GENDER_KNOWN  Gender = "UNKNOWN"
-	GENDER_MALE   Gender = "MALE"
-	GENDER_FEMALE Gender = "FEMALE"
+	GenderUnknown Gender = "UNKNOWN"
+	GenderMale    Gender = "MALE"
+	GenderFemale  Gender = "FEMALE"
 )

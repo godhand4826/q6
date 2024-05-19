@@ -1,0 +1,40 @@
+run:
+  go: '1.22.3'
+  timeout: 2m
+linters:
+  enable:
+    - bodyclose
+    - contextcheck
+    - dogsled
+    - errcheck
+    - funlen
+    - goconst
+    - gocyclo
+    - godot
+    - gofmt
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
+    - revive
+    - typecheck
+linters-settings:
+  funlen:
+    lines: 60
+    statements: 20
+  gocyclo:
+    min-complexity: 10
+  lll:
+    line-length: 120
+  misspell:
+    locale: US
+  nakedret:
+    max-func-lines: 5

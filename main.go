@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"cmp"
 
@@ -14,15 +15,18 @@ func main() {
 	addr := cmp.Or(os.Getenv("ADDR"), ":8080")
 
 	logger := NewLogger()
-	defer logger.Sync()
+	defer func() {
+		_ = logger.Sync()
+	}()
 
 	matchingSystem := NewMatchingSystem(logger)
 	engine := NewServer(logger)
 	NewMatchingSystemRouter(matchingSystem).BindOn(engine)
 
 	server := &http.Server{
-		Addr:    addr,
-		Handler: engine.Handler(),
+		ReadTimeout: time.Second,
+		Addr:        addr,
+		Handler:     engine.Handler(),
 	}
 
 	logger.Info("Starting server at", zap.String("addr", addr))

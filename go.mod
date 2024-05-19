@@ -1,4 +1,4 @@
-module bito
+module q6
 
 go 1.22.3
 

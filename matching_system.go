@@ -51,22 +51,20 @@ func NewMatchingSystem(logger *zap.Logger) MatchingSystem {
 		maxQueueByHeight: NewQ(func(a, b *MatchRequest) bool {
 			if a.Height != b.Height {
 				return a.Height > b.Height
-			} else {
-				return a.CreatedAt.Before(b.CreatedAt)
 			}
+			return a.CreatedAt.Before(b.CreatedAt)
 		}),
 		minQueueByHeight: NewQ(func(a, b *MatchRequest) bool {
 			if a.Height != b.Height {
 				return a.Height < b.Height
-			} else {
-				return a.CreatedAt.Before(b.CreatedAt)
 			}
+			return a.CreatedAt.Before(b.CreatedAt)
 		}),
 	}
 }
 
 func (m *matchingSystem) AddSinglePersonAndMatch(name string, height int, gender Gender, dates int) (ID, error) {
-	if gender != GENDER_MALE && gender != GENDER_FEMALE {
+	if gender != GenderMale && gender != GenderFemale {
 		return 0, ErrInvalidGender
 	}
 	if dates <= 0 {
@@ -76,7 +74,7 @@ func (m *matchingSystem) AddSinglePersonAndMatch(name string, height int, gender
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	m.nextID += 1
+	m.nextID++
 	id := m.nextID
 
 	item := NewItem(&MatchRequest{
@@ -90,17 +88,17 @@ func (m *matchingSystem) AddSinglePersonAndMatch(name string, height int, gender
 
 	m.requests[id] = item
 
-	if gender == GENDER_MALE {
+	if gender == GenderMale {
 		m.maxQueueByHeight.PushItem(item)
-	} else if gender == GENDER_FEMALE {
+	} else if gender == GenderFemale {
 		m.minQueueByHeight.PushItem(item)
 	}
 
 	m.logger.Infow("Person added", "user", item.Value)
 
-	if gender == GENDER_FEMALE {
+	if gender == GenderFemale {
 		m.matchForFemale()
-	} else if gender == GENDER_MALE {
+	} else if gender == GenderMale {
 		m.matchForMale()
 	}
 
@@ -122,9 +120,9 @@ func (m *matchingSystem) removeSinglePerson(id ID) error {
 
 	delete(m.requests, id)
 
-	if item.Value.Gender == GENDER_MALE {
+	if item.Value.Gender == GenderMale {
 		m.maxQueueByHeight.Remove(item.Index)
-	} else if item.Value.Gender == GENDER_FEMALE {
+	} else if item.Value.Gender == GenderFemale {
 		m.minQueueByHeight.Remove(item.Index)
 	}
 
@@ -137,7 +135,7 @@ func (m *matchingSystem) QuerySinglePeople(n int, gender Gender) ([]*MatchReques
 	if n <= 0 {
 		return nil, ErrInvalidQuerySize
 	}
-	if gender != GENDER_MALE && gender != GENDER_FEMALE {
+	if gender != GenderMale && gender != GenderFemale {
 		return nil, ErrInvalidGender
 	}
 
@@ -145,9 +143,9 @@ func (m *matchingSystem) QuerySinglePeople(n int, gender Gender) ([]*MatchReques
 	defer m.mutex.Unlock()
 
 	var q *Queue[MatchRequest]
-	if gender == GENDER_MALE {
+	if gender == GenderMale {
 		q = m.maxQueueByHeight
-	} else if gender == GENDER_FEMALE {
+	} else if gender == GenderFemale {
 		q = m.minQueueByHeight
 	}
 
@@ -174,17 +172,17 @@ func (m *matchingSystem) matchForMale() {
 
 	maleItem.Value.Dates -= len(femaleItems)
 	for _, item := range femaleItems {
-		item.Value.Dates -= 1
+		item.Value.Dates--
 		m.logger.Infow("Matched", "male", maleItem.Value, "female", item.Value)
 	}
 
 	m.minQueueByHeight.PushItems(femaleItems...)
 
 	if maleItem.Value.Dates == 0 {
-		m.removeSinglePerson(maleItem.Value.UserID)
+		_ = m.removeSinglePerson(maleItem.Value.UserID)
 	}
 	for m.minQueueByHeight.Len() > 0 && m.minQueueByHeight.PeekItem().Value.Dates == 0 {
-		m.removeSinglePerson(m.minQueueByHeight.PeekItem().Value.UserID)
+		_ = m.removeSinglePerson(m.minQueueByHeight.PeekItem().Value.UserID)
 	}
 }
 
@@ -200,16 +198,16 @@ func (m *matchingSystem) matchForFemale() {
 
 	femaleItem.Value.Dates -= len(maleItems)
 	for _, item := range maleItems {
-		item.Value.Dates -= 1
+		item.Value.Dates--
 		m.logger.Infow("Matched", "female", femaleItem.Value, "male", item.Value)
 	}
 
 	m.maxQueueByHeight.PushItems(maleItems...)
 
 	if femaleItem.Value.Dates == 0 {
-		m.removeSinglePerson(femaleItem.Value.UserID)
+		_ = m.removeSinglePerson(femaleItem.Value.UserID)
 	}
 	for m.maxQueueByHeight.Len() > 0 && m.maxQueueByHeight.PeekItem().Value.Dates == 0 {
-		m.removeSinglePerson(m.maxQueueByHeight.PeekItem().Value.UserID)
+		_ = m.removeSinglePerson(m.maxQueueByHeight.PeekItem().Value.UserID)
 	}
 }

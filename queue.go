@@ -70,24 +70,24 @@ func (q *Queue[V]) Init() {
 	heap.Init(q)
 }
 
-// Remove removes an item by index
+// Remove removes an item by index.
 func (q *Queue[V]) Remove(i int) {
 	heap.Remove(q, i)
 }
 
-// Fix fix the heap ordering for the item at index i
+// Fix fix the heap ordering for the item at index i.
 func (q *Queue[V]) Fix(i int) {
 	heap.Fix(q, i)
 }
 
-// Peek peek the top item of the queue
+// Peek peek the top item of the queue.
 func (q *Queue[V]) PeekItem() *Item[V] {
 	return q.Items[0]
 }
 
 // ---------- Start implement heap.Interface ----------
 
-// Implement heap.Interface
+// Implement heap.Interface.
 var _ heap.Interface = (*Queue[int])(nil)
 
 // Len implements heap.Interface.
