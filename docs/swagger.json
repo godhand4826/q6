@@ -1,0 +1,219 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Q6 API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/people": {
+            "post": {
+                "description": "Add a new user to the matching system and find any possible matches for the new user.\nGender must be \"MALE\" or \"FEMALE\"\nDates must be greater than zero\nReturns the ID of the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "AddSinglePersonAndMatchHandler",
+                "parameters": [
+                    {
+                        "description": "user info",
+                        "name": "name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/router.AddSinglePersonAndMatchHandler.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/router.AddSinglePersonAndMatchHandler.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/serve.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/people/female": {
+            "get": {
+                "description": "Find the most N possible matched single female people, where N is a request parameter.",
+                "summary": "QuerySingleFemale",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "query size",
+                        "name": "n",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entity.MatchRequest"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/serve.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/people/male": {
+            "get": {
+                "description": "Find the most N possible matched single male people, where N is a request parameter.",
+                "summary": "QuerySingleMale",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "query size",
+                        "name": "n",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entity.MatchRequest"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/serve.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/people/{id}": {
+            "delete": {
+                "description": "Remove a user from the matching system so that the user cannot be matched anymore.",
+                "summary": "RemoveSinglePerson",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/serve.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/serve.HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entity.Gender": {
+            "type": "string",
+            "enum": [
+                "UNKNOWN",
+                "MALE",
+                "FEMALE"
+            ],
+            "x-enum-varnames": [
+                "GenderUnknown",
+                "GenderMale",
+                "GenderFemale"
+            ]
+        },
+        "entity.MatchRequest": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "dates": {
+                    "type": "integer"
+                },
+                "gender": {
+                    "$ref": "#/definitions/entity.Gender"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "router.AddSinglePersonAndMatchHandler.Request": {
+            "type": "object",
+            "properties": {
+                "dates": {
+                    "type": "integer"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "router.AddSinglePersonAndMatchHandler.Response": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "serve.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

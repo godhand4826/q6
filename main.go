@@ -12,6 +12,10 @@ import (
 	"go.uber.org/zap"
 )
 
+// @title		Q6 API
+// @version	1.0
+// @host		localhost:8080
+// @BasePath	/
 func main() {
 	cfg := config.NewConfig()
 
@@ -23,6 +27,7 @@ func main() {
 	matchingSystem := service.NewMatchingSystem(logger)
 	engine := serve.NewServer(logger)
 	router.NewMatchingSystemRouter(matchingSystem).BindOn(engine)
+	serve.NewSwaggerRouter().BindOn(engine)
 
 	server := &http.Server{
 		ReadTimeout: time.Second,

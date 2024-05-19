@@ -1,0 +1,151 @@
+basePath: /
+definitions:
+  entity.Gender:
+    enum:
+    - UNKNOWN
+    - MALE
+    - FEMALE
+    type: string
+    x-enum-varnames:
+    - GenderUnknown
+    - GenderMale
+    - GenderFemale
+  entity.MatchRequest:
+    properties:
+      createdAt:
+        type: string
+      dates:
+        type: integer
+      gender:
+        $ref: '#/definitions/entity.Gender'
+      height:
+        type: integer
+      name:
+        type: string
+      userID:
+        type: integer
+    type: object
+  router.AddSinglePersonAndMatchHandler.Request:
+    properties:
+      dates:
+        type: integer
+      gender:
+        type: string
+      height:
+        type: integer
+      name:
+        type: string
+    type: object
+  router.AddSinglePersonAndMatchHandler.Response:
+    properties:
+      id:
+        type: integer
+    type: object
+  serve.HTTPError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: Q6 API
+  version: "1.0"
+paths:
+  /people:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Add a new user to the matching system and find any possible matches for the new user.
+        Gender must be "MALE" or "FEMALE"
+        Dates must be greater than zero
+        Returns the ID of the user.
+      parameters:
+      - description: user info
+        in: body
+        name: name
+        required: true
+        schema:
+          $ref: '#/definitions/router.AddSinglePersonAndMatchHandler.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/router.AddSinglePersonAndMatchHandler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serve.HTTPError'
+      summary: AddSinglePersonAndMatchHandler
+  /people/{id}:
+    delete:
+      description: Remove a user from the matching system so that the user cannot
+        be matched anymore.
+      parameters:
+      - description: user ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serve.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/serve.HTTPError'
+      summary: RemoveSinglePerson
+  /people/female:
+    get:
+      description: Find the most N possible matched single female people, where N
+        is a request parameter.
+      parameters:
+      - description: query size
+        in: query
+        name: "n"
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.MatchRequest'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serve.HTTPError'
+      summary: QuerySingleFemale
+  /people/male:
+    get:
+      description: Find the most N possible matched single male people, where N is
+        a request parameter.
+      parameters:
+      - description: query size
+        in: query
+        name: "n"
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.MatchRequest'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serve.HTTPError'
+      summary: QuerySingleMale
+swagger: "2.0"

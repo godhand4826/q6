@@ -1,6 +1,7 @@
 package serve
 
 import (
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,10 @@ func AccessLogMiddleware(logger *zap.Logger) gin.HandlerFunc {
 		query := c.Request.URL.RawQuery
 
 		c.Next()
+
+		if strings.HasPrefix(path, "/swagger") {
+			return
+		}
 
 		elapsed := time.Since(start)
 

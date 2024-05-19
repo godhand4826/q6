@@ -4,7 +4,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 ARG PROGRAM=executable
-RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 make build
+RUN CGO_ENABLED=0 make build
 
 FROM alpine:3.10.3 AS runner
 WORKDIR /app

@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -19,7 +20,7 @@ func LoadFlags() {
 
 	// visit set flags
 	flag.Visit(func(f *flag.Flag) {
-		os.Setenv(f.Name, f.Value.String())
+		os.Setenv(strings.ToUpper(f.Name), f.Value.String())
 	})
 }
 
