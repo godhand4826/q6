@@ -120,25 +120,6 @@ func (m *matchingSystem) RemoveSinglePerson(id entity.ID) error {
 	return m.removeSinglePerson(id)
 }
 
-func (m *matchingSystem) removeSinglePerson(id entity.ID) error {
-	item := m.requests[id]
-	if item == nil {
-		return ErrPersonNotFound
-	}
-
-	delete(m.requests, id)
-
-	if item.Value.Gender == entity.GenderMale {
-		m.maxQueueByHeight.Remove(item.Index)
-	} else if item.Value.Gender == entity.GenderFemale {
-		m.minQueueByHeight.Remove(item.Index)
-	}
-
-	m.logger.Infow("Person removed", "user", item.Value)
-
-	return nil
-}
-
 func (m *matchingSystem) QuerySinglePeople(n int, gender entity.Gender) ([]*entity.MatchRequest, error) {
 	if n <= 0 {
 		return nil, ErrInvalidQuerySize
@@ -218,4 +199,23 @@ func (m *matchingSystem) matchForFemale() {
 	for m.maxQueueByHeight.Len() > 0 && m.maxQueueByHeight.PeekItem().Value.Dates == 0 {
 		_ = m.removeSinglePerson(m.maxQueueByHeight.PeekItem().Value.UserID)
 	}
+}
+
+func (m *matchingSystem) removeSinglePerson(id entity.ID) error {
+	item := m.requests[id]
+	if item == nil {
+		return ErrPersonNotFound
+	}
+
+	delete(m.requests, id)
+
+	if item.Value.Gender == entity.GenderMale {
+		m.maxQueueByHeight.Remove(item.Index)
+	} else if item.Value.Gender == entity.GenderFemale {
+		m.minQueueByHeight.Remove(item.Index)
+	}
+
+	m.logger.Infow("Person removed", "user", item.Value)
+
+	return nil
 }
