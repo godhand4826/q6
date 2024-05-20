@@ -81,3 +81,18 @@ env TAG=1.0.0 make image # or provide a tag name
 | QuerySinglePeople         | O(N * log(n))    |
 
 (`n` 為該性別尚未配對的人數; `N` 為請求的數量)
+
+## TBD
+- Save match result
+- Mock and testing
+- Benchmark testing
+- Memory allocation
+- Separate doc server
+- Integration test
+- CI/CD pipeline
+- Graceful shutdown
+- Readiness and liveness probe
+- Metrics
+- Alert
+- Trace
+- ...
