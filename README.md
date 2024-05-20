@@ -13,6 +13,9 @@ make build
 # test
 make test
 
+# test report
+make report
+
 # clean
 make clean
 

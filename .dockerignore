@@ -14,3 +14,7 @@ go.work.sum
 bin
 .env
 q6
+
+coverage.txt
+coverage.xml
+junit.xml
