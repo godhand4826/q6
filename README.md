@@ -5,6 +5,13 @@
 - docker
 - GNU Make
 
+## Quick start
+Start the server
+```bash
+make build && ./q6
+```
+And visit http://localhost:8080/swagger/index.html
+
 ## Makefile
 ```bash
 # build
